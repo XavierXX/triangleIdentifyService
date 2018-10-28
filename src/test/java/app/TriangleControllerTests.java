@@ -22,7 +22,6 @@ public class TriangleControllerTests {
     private MockMvc mockMvc;
 
     // Normal Case Section
-
     @Test
     public void checkTriangleCaseScalene() throws Exception {
         this.mockMvc.perform(get("/triangle")
@@ -112,8 +111,6 @@ public class TriangleControllerTests {
                 .andDo(print()).andExpect(status().isBadRequest());
     }
 
-
-
     @Test
     public void checkTriangleCaseExceptional03() throws Exception {
         this.mockMvc.perform(get("/triangle")
@@ -164,7 +161,7 @@ public class TriangleControllerTests {
                 .andExpect(jsonPath("$.triangleType").value("invalid"));
     }
 
-    // Scenario : wrong sides length;
+    // Scenario : wrong sides length, any two sides add up less than 3rd side;
     @Test
     public void checkTriangleCaseInvalidSides1() throws Exception {
         this.mockMvc.perform(get("/triangle")
@@ -190,6 +187,16 @@ public class TriangleControllerTests {
         this.mockMvc.perform(get("/triangle")
                 .param("sideA", "2")
                 .param("sideB", "1")
+                .param("sideC", "1"))
+                .andDo(print()).andExpect(status().isOk())
+                .andExpect(jsonPath("$.triangleType").value("invalid"));
+    }
+
+    @Test
+    public void checkTriangleCaseInvalidSides4() throws Exception {
+        this.mockMvc.perform(get("/triangle")
+                .param("sideA", "2")
+                .param("sideB", "9")
                 .param("sideC", "1"))
                 .andDo(print()).andExpect(status().isOk())
                 .andExpect(jsonPath("$.triangleType").value("invalid"));

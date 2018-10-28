@@ -39,8 +39,8 @@ public class TriangleServiceImp implements TriangleService {
                 && validateSide(sideB)
                 && validateSide(sideC)) {
             return sideA.add(sideB).compareTo(sideC) > 0
-                    || sideB.add(sideC).compareTo(sideA) > 0
-                    || sideC.add(sideA).compareTo(sideB) > 0;
+                    && sideB.add(sideC).compareTo(sideA) > 0
+                    && sideC.add(sideA).compareTo(sideB) > 0;
         } else {
             return false;
         }

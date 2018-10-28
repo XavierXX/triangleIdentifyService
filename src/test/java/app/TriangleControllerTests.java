@@ -21,10 +21,12 @@ public class TriangleControllerTests {
     @Autowired
     private MockMvc mockMvc;
 
+    // Normal Case Section
+
     @Test
     public void checkTriangleCaseScalene() throws Exception {
         this.mockMvc.perform(get("/triangle")
-                .param("sideA", "1")
+                .param("sideA", "1.5")
                 .param("sideB", "2")
                 .param("sideC", "3"))
                 .andDo(print()).andExpect(status().isOk())
@@ -72,7 +74,7 @@ public class TriangleControllerTests {
     }
 
     @Test
-    public void checkTriangleCaseEquilateral() throws Exception {
+    public void checkTriangleCaseEquilateral1() throws Exception {
         this.mockMvc.perform(get("/triangle")
                 .param("sideA", "2")
                 .param("sideB", "2")
@@ -81,6 +83,17 @@ public class TriangleControllerTests {
                 .andExpect(jsonPath("$.triangleType").value("Equilateral triangle"));
     }
 
+    @Test
+    public void checkTriangleCaseEquilateral2() throws Exception {
+        this.mockMvc.perform(get("/triangle")
+                .param("sideA", "2.1")
+                .param("sideB", "2.1")
+                .param("sideC", "2.1"))
+                .andDo(print()).andExpect(status().isOk())
+                .andExpect(jsonPath("$.triangleType").value("Equilateral triangle"));
+    }
+    // Exceptional Case Section
+    // Scenario : illegal input;
     @Test
     public void checkTriangleCaseExceptional01() throws Exception {
         this.mockMvc.perform(get("/triangle")
@@ -110,6 +123,7 @@ public class TriangleControllerTests {
                 .andDo(print()).andExpect(status().isBadRequest());
     }
 
+    // Scenario : invalid triangle;
     @Test
     public void checkTriangleCaseExceptional04() throws Exception {
         this.mockMvc.perform(get("/triangle")
@@ -150,18 +164,54 @@ public class TriangleControllerTests {
                 .andExpect(jsonPath("$.triangleType").value("invalid"));
     }
 
+    // Scenario : wrong sides length;
     @Test
-    public void checkTriangleCaseExceptional08() throws Exception {
+    public void checkTriangleCaseInvalidSides1() throws Exception {
+        this.mockMvc.perform(get("/triangle")
+                .param("sideA", "1")
+                .param("sideB", "1")
+                .param("sideC", "3"))
+                .andDo(print()).andExpect(status().isOk())
+                .andExpect(jsonPath("$.triangleType").value("invalid"));
+    }
+
+    @Test
+    public void checkTriangleCaseInvalidSides2() throws Exception {
+        this.mockMvc.perform(get("/triangle")
+                .param("sideA", "2.0000000001")
+                .param("sideB", "1")
+                .param("sideC", "1"))
+                .andDo(print()).andExpect(status().isOk())
+                .andExpect(jsonPath("$.triangleType").value("invalid"));
+    }
+
+    @Test
+    public void checkTriangleCaseInvalidSides3() throws Exception {
+        this.mockMvc.perform(get("/triangle")
+                .param("sideA", "2")
+                .param("sideB", "1")
+                .param("sideC", "1"))
+                .andDo(print()).andExpect(status().isOk())
+                .andExpect(jsonPath("$.triangleType").value("invalid"));
+    }
+
+
+    // Extreme Case
+    // Scenario : large input;
+    @Test
+    public void checkTriangleCaseExtreme01() throws Exception {
         this.mockMvc.perform(get("/triangle")
                 .param("sideA", "99999999999999999999999999999999999999999999999999999999999999999")
                 .param("sideB", "88888888888888888888888888888888888888888888888888888888888888888")
                 .param("sideC", "3"))
                 .andDo(print()).andExpect(status().isOk())
-                .andExpect(jsonPath("$.triangleType").value("Scalene Triangle"));
+                .andExpect(jsonPath("$.triangleType").value("invalid"));
     }
 
+    // Extreme Case
+    // Scenario : floating illegal input;
     @Test
-    public void checkTriangleCaseExceptional09() throws Exception {
+    public void checkTriangleCaseExtreme02() throws Exception {
         this.mockMvc.perform(get("/triangle")
                 .param("sideA", "9.9.9")
                 .param("sideB", "88888888888888888888888888888888888888888888888888888888888888888")
